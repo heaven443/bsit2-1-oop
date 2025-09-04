@@ -1,65 +1,133 @@
-class Student {
+import java.util.ArrayList;
 
-    // Data Types Listings
-    public double average = 0;
-    public double[] grades = {};
-    public String letterGrade = "";
+class Book {
 
-    // Calculating the Average Grades using a "for loop"
-    public double calculateAverage(double... grades){
-        // Temporary Data type for adding the sum of the grades
-        double adding = 0;
+    private String title;
+    private String author;
+    private ArrayList<Integer> ratings;
+    private static int totalBooks = 0;
 
-        // Adding the sum of the given grades
-        for (double calculate : grades){
-            adding += calculate;
-        }
+    public Book(String title, String author) {
 
-        // Returns the grades while dividing the length of it ie. "sum / grades.length("example. 5")"
-        return average = (double) adding / grades.length;
+        this.title = title;
+        this.author = author;
+        this.ratings = new ArrayList<>();
+        totalBooks++;
+
     }
 
-    // Getting the letter Grade using the Average Score from "calculateAverage"
-    public String getLetterGrade(double average){
+    public void addRating(int rating) throws IllegalArgumentException {
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("Invalid rating: must be 1-5 stars");
+        }
+            ratings.add(rating);
+    }
 
-        // Checks if the average grades are applicable on the conditions given
-        if (average >= 100){
-            letterGrade = "A";
-        } else if (average >= 80) {
-            letterGrade = "B";
-        } else if (average >= 70) {
-            letterGrade = "C";
-        } else if (average >= 60) {
-            letterGrade = "D";
+    public double getAverageRating(){
+
+        double sum = 0;
+        for (Integer num : ratings) {
+            sum += num;
+        }
+
+        double average = sum / ratings.size();
+        return average;
+
+    }
+
+    public String getPopularityLevel(){
+
+        String popularityLevel = "";
+
+        if (getAverageRating() >= 4.5) {
+            popularityLevel = "Excellent";
+        } else if (getAverageRating() >= 3.5) {
+            popularityLevel = "Good";
+        } else if (getAverageRating() >= 2.5) {
+            popularityLevel = "Average";
+        } else if (getAverageRating() >= 1.5) {
+            popularityLevel = "Poor";
+        } else if (getAverageRating() >= 1.0) {
+            popularityLevel = "Terrible";
         } else {
-            // if none are found, then it will just result as an F
-            letterGrade = "F";
+            return "No ratings";
         }
 
-        // when finished it will just return the letter grade and can be accessed using "objectname.letterGrade"
-        return letterGrade;
+        return popularityLevel;
     }
 
-    // Displays the result WITHOUT the letterGrade using Overloading
-    public void displayResult(String studentName, double average) {
-        System.out.println("Name : " + studentName + ", " + "Average : " + average);
+    public void addMultipleRatings(int... ratings) {
+
+        for (int rating : ratings) {
+            try {
+                addRating(rating);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error adding rating " + rating + ": " + e.getMessage());
+            }
+
+        }
     }
 
-    // Displays the result WITH the letterGrade using Overloading
-    public void displayResult(String studentName, double average, String letterGrade) {
-        System.out.println("Name : " + studentName + ", " + "Average : " + average + ", " + "Grade : "+ letterGrade);
+    public static int getTotalBooks(){
+        return totalBooks;
     }
+    public String getTitle() {
+        return title;
+    }
+    public String getAuthor() {
+        return author;
+    }
+    public String displayBook(){
+        return "Book: " + title + ", By : " + author + ", Average Rating: " + getAverageRating() + ", Level : " + getPopularityLevel();
+    }
+
 }
 
-public class Main {
+
+class main {
     public static void main(String[] args) {
 
-        Student student1 = new Student();
 
-        student1.calculateAverage( 85.5, 92.0, 78.5, 90.0); // Give the Grades
-        student1.getLetterGrade(student1.average); // Calculate the average using the "calculateAverage" Class
-        student1.displayResult("John Smith", student1.average); // Displaying WITHOUT the letterGrade using Overloading
-        student1.displayResult("John Smith", student1.average, student1.letterGrade); // Displaying WITH the letterGrade using Overloading
+        Book Book1 = new Book("Java Programming", "John Smith");
+        Book Book2 = new Book("Data Structures", "Alice Brown");
+        Book Book3 = new Book("Web Development", "Bob Wilson");
 
+        try {
+            Book1.addRating(4);
+            Book1.addRating(6);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed to add rating to book1: " + e.getMessage());
+        } finally {
+            System.out.println("Sucessfully Added Rating");
+        }
+
+        Book2.addMultipleRatings(5 ,4 ,3, 5, 6);
+        Book3.addMultipleRatings(2, 1, 0);
+
+        try {
+            Book1.addRating(0);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed to add invalid rating to book1: " + e.getMessage());
+        } finally {
+            System.out.println("Sucessfully Added Rating");
+        }
+
+        System.out.println("\nBook Details:");
+        System.out.println(Book1.displayBook());
+        System.out.println(Book2.displayBook());
+        System.out.println(Book3.displayBook());
+
+        System.out.println("\nTotal Books Created: " + Book.getTotalBooks());
+
+        Book highestRated = Book1;
+        if (Book2.getAverageRating() > highestRated.getAverageRating()) {
+            highestRated = Book2;
+        }
+        if (Book3.getAverageRating() > highestRated.getAverageRating()) {
+            highestRated = Book3;
+        }
+
+        System.out.println("\nBook with highest average rating:");
+        System.out.println(highestRated.displayBook());
     }
 }
